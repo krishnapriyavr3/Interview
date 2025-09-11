@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Questions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <nav class="bg-purple-700 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">Manage Questions</h1>
+    <a href="dashboard.html" class="bg-yellow-500 text-black px-3 py-1 rounded-lg">Dashboard</a>
+  </nav>
+
+  <div class="p-6">
+    <form id="addQuestionForm" class="flex gap-2 mb-4">
+      <input type="text" id="questionTextInput" placeholder="Enter question" class="flex-1 px-4 py-2 border rounded-lg">
+      <button type="submit" class="bg-purple-700 text-white px-4 py-2 rounded-lg">Add</button>
+    </form>
+
+    <div class="bg-white shadow rounded-lg overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-purple-700 text-white">
+          <tr>
+            <th class="px-6 py-3">Question</th>
+            <th class="px-6 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="questionTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

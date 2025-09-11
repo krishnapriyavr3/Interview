@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Builder | Interview Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+
+  <!-- Navbar -->
+  <nav class="bg-purple-700 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">Resume Builder</h1>
+    <a href="dashboard.html" class="px-3 py-1 bg-yellow-500 text-black rounded-lg">Dashboard</a>
+  </nav>
+
+  <!-- Form -->
+  <div class="p-6 flex justify-center">
+    <form id="resumeForm" class="bg-white shadow-lg p-6 rounded-lg w-full md:w-2/3 space-y-4">
+      <h2 class="text-2xl font-bold text-purple-700 mb-4">Enter Your Details</h2>
+
+      <input id="name" placeholder="Full Name" class="w-full border px-4 py-2 rounded-lg" required>
+      <input id="address" placeholder="Address" class="w-full border px-4 py-2 rounded-lg">
+      <input id="phone" placeholder="Phone" class="w-full border px-4 py-2 rounded-lg">
+      <input id="email" placeholder="Email" type="email" class="w-full border px-4 py-2 rounded-lg">
+      <textarea id="summary" placeholder="Profile Summary" class="w-full border px-4 py-2 rounded-lg"></textarea>
+
+      <textarea id="education" placeholder="Education" class="w-full border px-4 py-2 rounded-lg"></textarea>
+      <textarea id="skills" placeholder="Technical Skills" class="w-full border px-4 py-2 rounded-lg"></textarea>
+      <textarea id="internships" placeholder="Internships" class="w-full border px-4 py-2 rounded-lg"></textarea>
+      <textarea id="projects" placeholder="Academic Projects" class="w-full border px-4 py-2 rounded-lg"></textarea>
+      <textarea id="trainings" placeholder="Trainings & Workshops" class="w-full border px-4 py-2 rounded-lg"></textarea>
+      <textarea id="achievements" placeholder="Achievements" class="w-full border px-4 py-2 rounded-lg"></textarea>
+      <textarea id="activities" placeholder="Extra-curricular Activities" class="w-full border px-4 py-2 rounded-lg"></textarea>
+
+      <button type="submit" class="w-full bg-yellow-500 text-black py-2 rounded-lg hover:bg-yellow-600">Generate Resume</button>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

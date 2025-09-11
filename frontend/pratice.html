@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice Questions | Interview Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+
+  <!-- Navbar -->
+  <nav class="bg-purple-700 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">Practice Questions</h1>
+    <div>
+      <a href="dashboard.html" class="mr-4 px-3 py-1 bg-yellow-500 text-black rounded-lg">Dashboard</a>
+      <button onclick="logout()" class="bg-red-500 px-3 py-1 rounded-lg">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Practice Section -->
+  <div class="p-6 flex flex-col items-center">
+    <h2 class="text-3xl font-bold text-purple-700 mb-6">Sharpen Your Interview Skills</h2>
+
+    <!-- Filter -->
+    <div class="mb-6">
+      <label for="category" class="font-semibold text-gray-700 mr-2">Choose Category:</label>
+      <select id="category" class="border rounded-lg px-3 py-2">
+        <option value="">Any</option>
+        <option value="HR">HR</option>
+        <option value="Technical">Technical</option>
+        <option value="Behavioral">Behavioral</option>
+      </select>
+    </div>
+
+    <!-- Question Card -->
+    <div class="bg-white shadow-lg rounded-lg p-6 w-full md:w-2/3 text-center">
+      <p id="questionText" class="text-lg text-gray-700 mb-4">Click below to load a question...</p>
+      
+      <textarea id="answerInput" placeholder="Type your answer here..." 
+        class="w-full border rounded-lg px-4 py-2 mb-4"></textarea>
+
+      <div class="flex justify-center gap-4">
+        <button onclick="submitAnswer()" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          Submit Answer
+        </button>
+        <button onclick="fetchQuestion()" class="px-6 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800">
+          Next Question
+        </button>
+      </div>
+    </div>
+
+    <!-- Review Section -->
+    <div id="reviewSection" class="bg-gray-100 rounded-lg p-4 mt-6 w-full md:w-2/3 hidden">
+      <h3 class="text-lg font-bold text-purple-700 mb-2">Your Answer</h3>
+      <p id="answerReview" class="text-gray-700"></p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

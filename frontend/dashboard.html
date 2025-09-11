@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Interview Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-purple-700 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">Dashboard</h1>
+    <div>
+      <a href="pratice.html" class="mr-4">Practice</a>
+      <a href="resume.html" class="mr-4">Resume</a>
+      <a href="table.html" class="mr-4">Users</a>
+      <button onclick="logout()" class="bg-red-500 px-3 py-1 rounded-lg">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="p-6 max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold text-purple-700 mb-6">Welcome back!</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Practice Questions -->
+      <div class="bg-white shadow p-6 rounded-lg text-center">
+        <h3 class="text-lg font-bold mb-2">Practice Questions</h3>
+        <p class="text-gray-600">Get random interview questions to practice.</p>
+        <a href="pratice.html" class="mt-4 inline-block px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800">
+          Start Practice
+        </a>
+      </div>
+
+      <!-- Resume Builder -->
+      <div class="bg-white shadow p-6 rounded-lg text-center">
+        <h3 class="text-lg font-bold mb-2">Resume Builder</h3>
+        <p class="text-gray-600">Create a professional resume with AI assistance.</p>
+        <a href="resume.html" class="mt-4 inline-block px-4 py-2 bg-yellow-500 rounded-lg hover:bg-yellow-600">
+          Build Resume
+        </a>
+      </div>
+
+      <!-- Manage Users -->
+      <div class="bg-white shadow p-6 rounded-lg text-center">
+        <h3 class="text-lg font-bold mb-2">Manage Users</h3>
+        <p class="text-gray-600">View and manage registered users.</p>
+        <a href="table.html" class="mt-4 inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          View Users
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
