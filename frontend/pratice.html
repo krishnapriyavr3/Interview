@@ -1,61 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Practice Questions | Interview Assistant</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .step {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .step.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            position: absolute;
+        }
+        /* Simple spinner for loading states */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen font-sans">
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
 
-  <!-- Navbar -->
-  <nav class="bg-purple-700 text-white p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">Practice Questions</h1>
-    <div>
-      <a href="dashboard.html" class="mr-4 px-3 py-1 bg-yellow-500 text-black rounded-lg">Dashboard</a>
-      <button onclick="logout()" class="bg-red-500 px-3 py-1 rounded-lg">Logout</button>
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 space-y-6 relative overflow-hidden">
+
+        <!-- Step 1: Setup Interview -->
+        <div id="step1" class="step">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-slate-800">AI Interview Practice</h1>
+                <p class="text-slate-500 mt-2">Prepare for your next big opportunity. Let's get started.</p>
+            </div>
+            <div class="mt-8">
+                <label for="interview-topic" class="block text-sm font-medium text-slate-700 mb-2">Choose a Topic</label>
+                <select id="interview-topic" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    <option value="javascript">JavaScript & Frontend</option>
+                    <option value="python">Python & Backend</option>
+                    <option value="data-structures">Data Structures & Algorithms</option>
+                    <option value="behavioral">Behavioral Questions</option>
+                </select>
+            </div>
+            <div class="mt-8">
+                <button id="start-interview-btn" onclick="startInterview()" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                    Start Your Practice Session
+                </button>
+            </div>
+             <div class="mt-4 text-center">
+                <p id="permission-error" class="text-red-500 text-sm h-4"></p>
+            </div>
+        </div>
+
+        <!-- Step 2: The Interview -->
+        <div id="step2" class="step hidden w-full">
+            <h2 id="question-header" class="text-2xl font-bold text-slate-800">Question 1</h2>
+            <p id="ai-question" class="text-slate-600 mt-2 bg-slate-50 p-4 rounded-lg min-h-[6rem]">Loading your first question...</p>
+            <div class="mt-4 aspect-video bg-slate-900 rounded-lg overflow-hidden relative">
+                <video id="user-video" class="w-full h-full object-cover" autoplay muted></video>
+                <div id="recording-indicator" class="hidden absolute top-4 left-4 flex items-center space-x-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                    <span>REC</span>
+                </div>
+            </div>
+            <div class="mt-6 flex items-center justify-center space-x-4">
+                <button id="record-btn" onclick="startRecording()" class="bg-green-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-600 transition-transform transform hover:scale-105 disabled:bg-slate-400" disabled>
+                    Start Answering
+                </button>
+                <button id="stop-btn" onclick="stopRecording()" class="bg-red-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-red-600 transition-transform transform hover:scale-105 hidden">
+                    Submit Answer
+                </button>
+            </div>
+        </div>
+        
+        <!-- Step 3: Get Feedback -->
+        <div id="step3" class="step hidden w-full">
+            <div id="loading-feedback" class="text-center space-y-4 py-12">
+                 <div class="spinner mx-auto"></div>
+                 <h2 class="text-2xl font-bold text-slate-800">✨ Analyzing your interview...</h2>
+                 <p class="text-slate-500">Our AI is reviewing your performance across all questions. Hang tight!</p>
+            </div>
+            <div id="feedback-content" class="hidden">
+                 <h2 class="text-3xl font-bold text-slate-800 text-center">Overall Interview Feedback</h2>
+                <div class="mt-6 space-y-6">
+                    <div>
+                        <h3 class="font-semibold text-lg text-slate-700">Full Interview Transcript</h3>
+                        <div id="transcript-container" class="text-slate-600 mt-2 bg-slate-50 p-4 rounded-lg border max-h-48 overflow-y-auto space-y-2"></div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg text-slate-700">AI Feedback</h3>
+                        <div id="ai-feedback" class="text-slate-600 mt-2 bg-green-50 p-4 rounded-lg border border-green-200 space-y-2">
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-center">
+                    <button onclick="practiceAgain()" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105">
+                        Start a New Interview
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
-  </nav>
 
-  <!-- Practice Section -->
-  <div class="p-6 flex flex-col items-center">
-    <h2 class="text-3xl font-bold text-purple-700 mb-6">Sharpen Your Interview Skills</h2>
+    <script>
+        // --- Question Bank Fallback ---
+        const questionBank = {
+            javascript: [
+                "Explain the concept of closures in JavaScript.", "What is the event loop and how does it work?", "Describe the difference between `let`, `const`, and `var`.", "What are Promises and why are they useful?", "Explain `async/await` and how it improves upon Promises.", "What is the `this` keyword and how does its value get determined?", "Describe prototypal inheritance in JavaScript.", "What are some new features in ES6 (ECMAScript 2015)?", "Explain the difference between `==` and `===`.", "What is the Virtual DOM and how does it work in a framework like React?", "What are higher-order functions?", "Explain event delegation in JavaScript.", "What's the difference between `null` and `undefined`?", "How do you handle errors in JavaScript?", "What is a pure function?"
+            ],
+            python: [
+                "What is the Global Interpreter Lock (GIL) in Python?", "Explain what decorators are and provide a simple example.", "What are generators in Python? How are they different from lists?", "Describe the difference between a list and a tuple.", "What are list comprehensions and why are they useful?", "How does memory management work in Python?", "What is the difference between `.py` and `.pyc` files?", "Explain the `*args` and `**kwargs` syntax.", "What are dunder (magic) methods in Python? Give an example.", "Describe the difference between a shallow copy and a deep copy.", "What is a lambda function?", "How does Python handle exceptions? Explain `try`, `except`, `finally`.", "What is PEP 8?", "What are metaclasses in Python?", "How does inheritance work in Python?"
+            ],
+            'data-structures': [
+                "What is the difference between an array and a linked list?", "Explain how a hash table works, including collision resolution.", "What is Big O notation and why is it important?", "Describe the difference between a stack and a queue.", "What are the main operations of a stack? What about a queue?", "Explain what a Binary Search Tree (BST) is.", "What makes a BST balanced? Why is balancing important?", "Describe the difference between breadth-first search (BFS) and depth-first search (DFS) on a graph.", "What is the time complexity of searching in a balanced BST?", "How would you reverse a linked list?", "What is a priority queue?", "Explain the heap data structure.", "What are some common sorting algorithms and their time complexities?", "Describe a real-world example of a graph data structure.", "What is dynamic programming?"
+            ],
+            behavioral: [
+                "Tell me about a time you had to deal with a difficult coworker.", "Describe a challenging project you worked on and how you handled it.", "Tell me about a time you failed. What did you learn from it?", "How do you handle tight deadlines and pressure?", "Describe a situation where you had to persuade someone to see things your way.", "Tell me about a time you went above and beyond your job responsibilities.", "How do you stay updated with the latest technologies?", "What is your greatest weakness?", "What is your greatest professional achievement?", "Where do you see yourself in five years?", "Why do you want to work for this company?", "How would you deal with a disagreement with your manager?", "Tell me about a time you had to learn something new quickly.", "Describe your ideal work environment.", "How do you prioritize your work?"
+            ]
+        };
 
-    <!-- Filter -->
-    <div class="mb-6">
-      <label for="category" class="font-semibold text-gray-700 mr-2">Choose Category:</label>
-      <select id="category" class="border rounded-lg px-3 py-2">
-        <option value="">Any</option>
-        <option value="HR">HR</option>
-        <option value="Technical">Technical</option>
-        <option value="Behavioral">Behavioral</option>
-      </select>
-    </div>
+        // --- API & State Configuration ---
+        const API_KEY = ""; // Leave blank, will be handled by the environment
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+        const MAX_QUESTIONS = 3;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    <!-- Question Card -->
-    <div class="bg-white shadow-lg rounded-lg p-6 w-full md:w-2/3 text-center">
-      <p id="questionText" class="text-lg text-gray-700 mb-4">Click below to load a question...</p>
-      
-      <textarea id="answerInput" placeholder="Type your answer here..." 
-        class="w-full border rounded-lg px-4 py-2 mb-4"></textarea>
+        // --- DOM Elements ---
+        const steps = document.querySelectorAll('.step');
+        const startInterviewBtn = document.getElementById('start-interview-btn');
+        const userVideo = document.getElementById('user-video');
+        const recordBtn = document.getElementById('record-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const recordingIndicator = document.getElementById('recording-indicator');
+        const interviewTopicEl = document.getElementById('interview-topic');
+        const questionHeader = document.getElementById('question-header');
+        const aiQuestionEl = document.getElementById('ai-question');
+        const loadingFeedback = document.getElementById('loading-feedback');
+        const feedbackContent = document.getElementById('feedback-content');
+        const permissionError = document.getElementById('permission-error');
+        const transcriptContainer = document.getElementById('transcript-container');
+        const aiFeedback = document.getElementById('ai-feedback');
 
-      <div class="flex justify-center gap-4">
-        <button onclick="submitAnswer()" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-          Submit Answer
-        </button>
-        <button onclick="fetchQuestion()" class="px-6 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800">
-          Next Question
-        </button>
-      </div>
-    </div>
+        // --- State Variables ---
+        let mediaStream, mediaRecorder, recognition;
+        let recordedChunks = [], conversationHistory = [], askedRandomQuestions = new Set();
+        let currentQuestionNumber = 0;
+        let isProcessing = false;
+        let finalTranscript = '';
 
-    <!-- Review Section -->
-    <div id="reviewSection" class="bg-gray-100 rounded-lg p-4 mt-6 w-full md:w-2/3 hidden">
-      <h3 class="text-lg font-bold text-purple-700 mb-2">Your Answer</h3>
-      <p id="answerReview" class="text-gray-700"></p>
-    </div>
-  </div>
+        // --- Speech Recognition Setup ---
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
 
-  <script src="script.js"></script>
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                finalTranscript = '';
+                for (let i = 0; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+            };
+            recognition.onerror = (event) => console.error("Speech recognition error:", event.error);
+        }
+
+        // --- Helper Functions ---
+        function getRandomQuestion(topic) {
+            const questions = questionBank[topic];
+            if (!questions || questions.length === 0) return "No fallback questions available.";
+            if (askedRandomQuestions.size >= questions.length) return "You've answered all fallback questions!";
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * questions.length);
+            } while (askedRandomQuestions.has(randomIndex));
+            askedRandomQuestions.add(randomIndex);
+            console.log(`API failed. Using fallback question #${randomIndex} for ${topic}.`);
+            return questions[randomIndex];
+        }
+
+        async function callGemini(prompt) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+
+                if (!data.candidates || data.candidates.length === 0) {
+                    console.warn("AI response blocked or empty.", data.promptFeedback || data);
+                    let reason = "The AI did not provide a response.";
+                    if (data.promptFeedback && data.promptFeedback.blockReason) {
+                        reason = `Response blocked due to: ${data.promptFeedback.blockReason}`;
+                    }
+                    throw new Error(reason);
+                }
+
+                const candidate = data.candidates[0];
+
+                if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0 && candidate.content.parts[0].text) {
+                    return candidate.content.parts[0].text.trim();
+                } else {
+                    console.warn("Received response with no content.", candidate);
+                    let reason = "The AI response was empty.";
+                    if (candidate.finishReason) {
+                        reason = `The interview could not be analyzed. Reason: ${candidate.finishReason}.`;
+                    }
+                    throw new Error(reason);
+                }
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                return `Sorry, an error occurred while communicating with the AI. ${error.message}`;
+            }
+        }
+
+        async function getInterviewResponse() {
+            let prompt, response;
+            const topic = interviewTopicEl.options[interviewTopicEl.selectedIndex].text;
+            const historyText = conversationHistory.map(turn => `${turn.role === 'user' ? 'Candidate' : 'Interviewer'}: ${turn.parts[0].text}`).join('\n\n');
+
+            if (currentQuestionNumber === 0) {
+                prompt = `You are an expert interviewer. The candidate wants to practice for a "${topic}" interview. Ask one insightful opening question. Only return the question text.`;
+            } else if (currentQuestionNumber >= MAX_QUESTIONS) {
+                prompt = `
+You are a highly respected career coach. Your task is to provide constructive feedback based on the following interview transcript for a "${topic}" role.
+
+Analyze the transcript and provide your feedback in three distinct sections. Please use these exact headings in markdown bold:
+- **Overall Summary:**
+- **Strengths:**
+- **Areas for Improvement:**
+
+Here is the transcript:
+---
+${historyText}
+---
+`;
+            } else {
+                prompt = `You are an expert interviewer continuing a "${topic}" interview. **History:**\n${historyText}\n\n**Instruction:** Ask the next logical follow-up question. Do not repeat topics. Only return the question text.`;
+            }
+            
+            response = await callGemini(prompt);
+            if (response.startsWith("Sorry, an error occurred")) {
+                if (currentQuestionNumber < MAX_QUESTIONS) response = getRandomQuestion(interviewTopicEl.value);
+            }
+            return response;
+        }
+
+        // --- Core Application Logic ---
+        function showStep(stepNumber) {
+            steps.forEach((step, index) => step.classList.toggle('hidden', index + 1 !== stepNumber));
+        }
+        
+        async function startInterview() {
+            startInterviewBtn.disabled = true;
+            startInterviewBtn.textContent = 'Preparing...';
+            permissionError.textContent = SpeechRecognition ? '' : 'Warning: Speech-to-text not supported in this browser.';
+            
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                userVideo.srcObject = mediaStream;
+                userVideo.onloadedmetadata = async () => {
+                   showStep(2);
+                   const firstQuestion = await getInterviewResponse();
+                   conversationHistory.push({ role: 'model', parts: [{ text: firstQuestion }] });
+                   aiQuestionEl.textContent = firstQuestion;
+                   currentQuestionNumber++;
+                   questionHeader.textContent = `Question ${currentQuestionNumber}`;
+                   recordBtn.disabled = false;
+                };
+            } catch (error) {
+                console.error("Error accessing media devices.", error);
+                permissionError.textContent = "Error: Camera/mic access denied. Please enable permissions.";
+                startInterviewBtn.disabled = false;
+                startInterviewBtn.textContent = 'Start Your Practice Session';
+            }
+        }
+        
+        function practiceAgain() {
+            if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+            conversationHistory = [];
+            currentQuestionNumber = 0;
+            askedRandomQuestions.clear();
+            startInterviewBtn.disabled = false;
+            startInterviewBtn.textContent = 'Start Your Practice Session';
+            loadingFeedback.classList.remove('hidden');
+            feedbackContent.classList.add('hidden');
+            recordBtn.classList.remove('hidden');
+            recordBtn.disabled = true;
+            stopBtn.classList.add('hidden');
+            showStep(1);
+        }
+
+        function startRecording() {
+            if (!mediaStream) return;
+            recordedChunks = [];
+            try {
+                mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'video/webm' });
+                mediaRecorder.ondataavailable = event => { if (event.data.size > 0) recordedChunks.push(event.data); };
+                mediaRecorder.onstart = () => {
+                    recordBtn.classList.add('hidden');
+                    stopBtn.classList.remove('hidden');
+                    recordingIndicator.classList.remove('hidden');
+                };
+                mediaRecorder.onstop = handleAnswerSubmission;
+                mediaRecorder.start();
+                if (recognition) {
+                    finalTranscript = '';
+                    recognition.start();
+                }
+            } catch (e) {
+                console.error('Exception while creating MediaRecorder:', e);
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+            if (recognition) recognition.stop();
+        }
+
+        async function handleAnswerSubmission() {
+            isProcessing = true;
+            recordingIndicator.classList.add('hidden');
+            stopBtn.textContent = 'Processing...';
+            stopBtn.disabled = true;
+
+            const userTranscript = finalTranscript.trim() || (SpeechRecognition ? "[No speech detected]" : "This is a simulated answer as speech recognition is not supported.");
+            conversationHistory.push({ role: 'user', parts: [{ text: userTranscript }] });
+
+            if (currentQuestionNumber < MAX_QUESTIONS) {
+                aiQuestionEl.textContent = 'Generating next question...';
+                const nextQuestion = await getInterviewResponse();
+                conversationHistory.push({ role: 'model', parts: [{ text: nextQuestion }] });
+                aiQuestionEl.textContent = nextQuestion;
+                currentQuestionNumber++;
+                questionHeader.textContent = `Question ${currentQuestionNumber}`;
+                stopBtn.classList.add('hidden');
+                stopBtn.textContent = 'Submit Answer';
+                stopBtn.disabled = false;
+                recordBtn.classList.remove('hidden');
+            } else {
+                await getFinalFeedback();
+                return;
+            }
+            isProcessing = false;
+        }
+
+        async function getFinalFeedback() {
+            showStep(3);
+            const feedbackText = await getInterviewResponse();
+            
+            transcriptContainer.innerHTML = conversationHistory.map(turn => 
+                `<p><strong>${turn.role === 'user' ? 'You' : 'Interviewer'}:</strong> ${turn.parts[0].text}</p>`
+            ).join('');
+
+            if (feedbackText.startsWith("Sorry, an error occurred")) {
+                 aiFeedback.innerHTML = `<p class="text-red-500">${feedbackText}</p>`;
+            } else {
+                // Replace markdown bolding (**) with <strong> tags
+                let formattedFeedback = feedbackText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Replace newlines with <br> tags for display
+                formattedFeedback = formattedFeedback.replace(/\n/g, '<br>');
+                aiFeedback.innerHTML = `<p>${formattedFeedback}</p>`;
+            }
+            
+            loadingFeedback.classList.add('hidden');
+            feedbackContent.classList.remove('hidden');
+        }
+
+        window.addEventListener('load', () => showStep(1));
+    </script>
+
 </body>
 </html>
+
